@@ -1,0 +1,3 @@
+
+:revealjs_theme: simple-noto
+:source-highlighter: highlight.js

@@ -1,9 +1,245 @@
-= Title Slide
-:revealjs_theme: sky
-:source-highlighter: highlight.js
+= Identifikace, autentizace - základní pojmy
+include::revealjs-settings.adoc[]
 
-== Slide One
 
-* Foo
-* Bar
-* World
+== Krátce z historie
+
+* Identifikace/Autentizace *v osobním kontaktu*
+** Spoléhá na (netechnologickou) biometrii – opakované rozpoznání tváře
+* Identifikace/Autentizace *bez přítomnosti osoby*
+** Zprostředkovaná pomocí nástrojů, technologií - Pečeti, podpisy, mechanické klíče, hesla apod.
+* Důvody pro identifikaci
+** Přístup k aktivu (něčemu, co má hodnotu), Ověření původu 
+
+
+== Historické prostředky autentizace na dálku
+
+image::img/means-history.png[background, size=cover]
+
+== Základní pojmy
+
+* *Identifikace* – určení identity 
+* *Autentizace* – ověření identity
+* *Autorizace* - odvození oprávnění ze známé/ověřené identity
+
+== Zmatení základních pojmů
+
+* *Nepřesnost/Neznalost* – mluvčí nerozlišuje z nedostatku znalosti
+* *Objektivním splynutím* – v závislosti na kontextu může jeden pojem splynout s druhým
+
+
+== Identita a identifikace
+
+=== Identita
+
+* *Není identity bez paměti*
+* Na základě znalosti historie ovlivňuje současnost
+* Různá dle kontextu
+* V oblasti IT
+** Většinou reprezentována jednoznačným identifikátorem
+** Sada vlastností vázaných k určitému subjektu, na základě kterých subjekt jedná či s ním jednají ostatní subjekty
+
+
+=== Identifikace
+
+* *Proces* určení identity zájmové osoby nebo systému 
+* Výsledkem je jednoznačný identifikátor
+
+* https://www.youtube.com/watch?v=JYzGSDOz_bw[Chybná identifikace může mít fatální následky]
+
+
+=== Identifikátor
+
+* Musí být jednoznačný ve vybrané množině
+* Původ identifikátoru
+** Přirozený - jméno, přezdívka
+** Umělý identifikátor – identifikační číslo
+* Vypovídací hodnota identifikátoru
+** Významový – nese dodatečnou informaci (např. RČ)
+** Bezvýznamový – nenese jinou informaci, než unikátnost
+
+
+== Autentizace
+
+=== Autentizace
+
+* *Proces* potvrzení identity subjektu na základě *důkazů* 
+* Založena na některém z postupů:
+** *Něco VÍM* –  znalost
+** *Něco MÁM* – vlastnictví 
+** *Něčím JSEM* – rysy osoby 
+
+=== VÍM (znalost)
+
+* Znalost, která je známa jen osobě s danou identitou
+** Heslo, postup
+* Ověřování 
+** Subjekt prokazuje znalost hesla, postupu
+
+[.columns]
+=== Příklady důkazu znalosti
+
+[.column]
+* heslo - sděluji přímo heslo
+* výzva/odpověď
+** FLASH! THUNDER!
+** 4->6, 7->3
+
+[.column]
+image::img/d-day.png[]
+
+[.columns]
+=== VÍM - Vlastnosti 
+
+[.column]
+* Riziko vytvoření kopie/zcizení
+* Bez možnosti detekce
+* Zpravidla nutnost odhalit tajemství při provádění autentizace
+* Možno využít tzv. zero knowledge postupy
+
+[.column.is-one-third]
+image::img/zero-knowledge-proof.png[]
+
+[.columns]
+=== Jak na hesla 
+
+[.column]
+* *jak to bylo*
+** často měnit
+** divné požadavky (písmeno, číslice, speciální znak, malé, velké)
+** bylo težké heslo vymyslet
+** ještě těžší zapamatovat
+** nepoužívat stejná
+
+[.column]
+* *jak je to nyní*
+** nejlépe bez hesel :-)
+** dlouhé heslo bez omezení znaků
+** měnit jen když je nezbytné
+** použij správce hesel
+** vždy 2FA
+** nepoužívat stejná
+
+=== Jak na hesla
+image::img/xkcd-pwd-entropy.png[]
+
+=== MÁM (vlastnictví)
+
+* Vlastnictví konkrétního předmětu
+** mobilní telefon, čipová karta, OTP generátor, autorizační kalkulátor aj.
+* Postup ověření
+** Subjekt prokazuje vlastnictví předmětu
+*** Bez specializovaného HW - např. GRID tabulka
+*** Se specializovaným HW - čtečka čipových karet
+
+=== MÁM - prostředky
+
+* mobilní telefon / počítač
+** SMS, WebAuthn/Passkeys
+* Dynamické OTP - HOTP, TOTP, OCRA
+* X509 certifikát
+** SW privátní klíč (na disku)
+** HW privátní klíč (karta, jiný krypto HW)
+* Statické OTP – GRID tabulka
+* Autorizační kalkulátor
+
+
+=== MÁM - vlastnosti
+
+* Fyzický předmět – snadná detekce zcizení
+* Není možné snadno vytvořit kopii
+** Krom GRID, SW PKI
+* Snadno zneužitelné při zcizení
+* Nutnost nošení dalšího předmětu
+* Někdy nutnost připojovat pomocí speciálního HW
+
+
+=== JSEM (biometrie)
+
+* Biometrické charakteristiky
+** Otisky prstů, 2D/3D obraz obličeje, obraz duhovky, hlasová analýza …
+* Postup ověření
+** Srovnání vzorku získaného v reálném čase se vzorkem uloženým
+** *Není schopna rozhodovat se 100% úspěšností*
+* Lokální (OK) vs. Vzdálená (zakázána GDPR) biometrie
+
+=== JSEM - vlastnosti
+
+* Vždy u sebe (výhoda i nevýhoda) 
+* Malé riziko nezjištěného zcizení
+* Obtížné kopírování 
+** I když u některých prvků je možné
+* Nutnost využívat specializovaný HW
+* Nekompatibilita a špatná porovnatelnost různých implementací
+* Nikdy není 100%
+
+
+== Vícefaktorová autentizace
+
+=== Vícefaktorová autentizace
+
+* 2FA, MFA 
+* kombinace postupů VÍM, MÁM, JSEM
+* vzájemná eliminace slabin 
+* zvyšuje bezpečnost x snižuje komfort
+* moderní technologie - snaha o vysokou bezpečnost při dobrém komfortu
+* platební karta + PIN
+* jmeno/heslo + OTP kód
+* vlastnictví telefonu +  biometrie
+
+== OTP - One Time Passwords 
+
+=== Standardy OTP
+* dříve drahá proprietární řešení
+* http://www.openauthentication.org/[Open Authentication - OATH]
+* Standard pro jednotnou implementaci vícefaktorové autentizace
+** https://datatracker.ietf.org/doc/html/rfc4226[HOTP – HMAC-Based One Time Password, RFC 4226]
+** https://datatracker.ietf.org/doc/html/rfc4226[TOTP – Time-Based One Time Password, RFC 6238]
+** OCRA – OATH Challenge-Response Auth
+* Sjednocení procesů zejména provisioningu v zájmu kompatibility
+* příklad - Google Authenticator
+
+=== HOTP 
+
+* generuje (typicky) 6 místný kód při každém spuštění
+* parametry sdílené mezi ověřovatelem a producentem
+** hash funkce `SHA-1`
+** tajný klíč `K`
+** rostoucí čítač `C`
+** délka kódu `d` (6-10)
+* použití 
+** generátor vytvoří kód a inkrementuje čítač generátoru
+** oveřovatel vytvoří kód a pokud se shoduje s kódem předaným z generátoru, došlo k úspěšnému ověření a inkrementuje čítač ověřovatele
+
+=== HOTP algoritmus
+
+image::img/HOTP.drawio.png[]
+
+=== Práce s čítačem
+
+* čítač mezi generátorem a ověřovatelem musí být synchronizován
+* jakmile je jednou úspěšně použit kód pro konkrétní hodnotu čítače, musí být čítač inkrementován - proto jednorázový kód
+* když generátor jede "na prázdno", rozsynchronizují se čítače
+* ověřovatel může mít nastaven rozsah inkremenování čítače při běžném ověření (jednotky), který neohrožuje bezpečnost
+* pro synchronizaci se používá např. 3 po sobe jdoucích kódů - snižuje se tak riziko útoku
+
+
+=== TOTP
+
+* HOTP s použitím časového slotu místo čítače
+* C~T~ = (T - T~0~)/T~X~
+** T - aktuální čas (unix epoch v sekundách)
+** T~0~ - začátek použité epochy (pro unix čas = 0)
+** T~X~ - délka platnosti kódu (výchozí 30 sekund)
+
+=== OCRA
+* umožňuje implementaci autorizačního kalkulátoru s ochranou PINem a podpisem dat
+* rozšíření HOTP metody o další vstupy a parametry
+** různé délky hash funkce 
+** výzva ve formě např. údajů o ověřované transakci
+** hash hesla/PINu
+** časový slot
+* použitím všech vstupních údajů na straně generátoru i ověřovatele je možné zabezpečit integritu předávaných dat
+
+
+
