@@ -1,0 +1,11 @@
+apiVersion: v2
+name: keycloak-ukazka
+description: A Helm chart for Kubernetes
+type: application
+version: 17.3.4
+appVersion: "22.0.5"
+dependencies:
+  - name: keycloak
+    repository: https://charts.bitnami.com/bitnami
+    version: 17.3.4
+

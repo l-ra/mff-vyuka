@@ -1,8 +1,317 @@
-= Title Slide
+= OAUTH2, OIDC, SSI, EDIW
 include::revealjs-settings.adoc[]
 
-== Slide One
+== Obsah přednášky
 
-* Foo
-* Bar
-* World
+* https://oauth.net/2/[OAUTH2] - autorizace přístupu k API poskytovatele dat bez prozrazení přístupových údajů uživatele
+* https://openid.net/developers/how-connect-works[OIDC] - OpenID Connect - rozšíření OAUTH2 o prvky protokolu federalizace identit
+* https://www.identity.com/self-sovereign-identity/[SSI] - Self Sovereign Identity - identita zcela po kontrolou subjektu
+* EDIW - EU Digital Identity Wallet - SSI pro občany EU
+
+
+== OAUTH2
+
+* cíl - umožnit přístup k aktivům uživatele 
+** bez nutnosti kompromitovat běžné přístupové údaje uživatele (zadává pouze do systému, kde jsou data držena)
+** s možností uživatele explicitně schválit rozsah přístupu (consent)
+** řízeně
+*** pro konkrétní systém/aplikaci (client)
+*** konkrétní rozsah (scope)
+* definuje postupy (tzv. flow), jak získat
+** access token - krátkodobé tajemství pro přístup
+** refresh token - dlouhodobé tajemství pro obnovu access token
+
+=== Základní pojmy
+
+* client - systéme/aplikace, které je možné přidělit přístup 
+* scope - identifikátor rozashu údajů, pro které se přiděluje přístup
+* access token
+** bezvýznamový řetězec, který slouží k prokázání oprávnění přístupu
+** platný krátkou dobu
+** opakovaně přanášený typicky v hlavičce `Authorization: Bearer access-token`
+* refresh token 
+** nemusí vždy existovat (záleží na typu postupu a na konfiguraci)
+** použitelný pro opakované vydání access tokenu
+
+=== Základní postup
+
+[.stretch]
+image::img/oauth2-abstract-flow.png[]
+
+=== Přehled postupů 
+
+* authorization code
+* PKCE
+* implicit
+* device code
+* https://www.oauth.com/playground/[OAUTH2 Playground]
+* https://developers.google.com/oauthplayground/[Google OAUTH2 Playground]
+
+=== Typy klientů
+
+* confidential - server side aplikace - dokáže udržet tajemství a prokázat se typicky heslem
+* public - webová stránka, mobilní aplikace - z principu není možné udržet tajemství 
+
+=== Access token flow
+
+[.stretch]
+image::img/access-token-flow.png[]
+
+=== Refresh token flow 
+
+[.stretch]
+image::img/refresh-token-flow.png[]
+
+=== Implicit flow - zastaralé
+
+[.stretch]
+image::img/implicit-flow.png[]
+
+=== Code flow + PKCE
+
+* doporučeno místo implicit flow
+* v rámci autorizačního požadavku je předáno tajemství nebo hash tajemství
+* požadavek o získání token kromě code vyžaduje ještě původní tajemství 
+
+=== Základní konfigurace
+
+* URL serveru
+** autorizační
+** token 
+* URL klienta
+** redirect 
+
+
+== OpenID Connect
+
+* rozšíření OAUTH2 pro federalizaci identit 
+* výsledkem získání tokenu je kromě access tokenu také id token
+* id_token
+** standardizovaný formát JWT
+** obsahuje informace o identitě uživatele
+** podepsaný a volitelně šifrovaný
+* další rozšíření: stadard JWT, standardizovaná metadata s parametry služeb
+
+=== Metadata
+
+[source,json]
+....
+{
+  "issuer": "https://keycloak.aiplgrnd.r73.info/realms/master",
+  "authorization_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/auth",
+  "token_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/token",
+  "introspection_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/token/introspect",
+  "userinfo_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/userinfo",
+  "end_session_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/logout",
+  "frontchannel_logout_session_supported": true,
+  "frontchannel_logout_supported": true,
+  "jwks_uri": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/certs",
+  "check_session_iframe": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/login-status-iframe.html",
+  "grant_types_supported": [],
+  "response_types_supported": [],
+  "subject_types_supported": [],
+  "id_token_signing_alg_values_supported": [],
+  "id_token_encryption_alg_values_supported": [],
+  "id_token_encryption_enc_values_supported": [],
+  "userinfo_signing_alg_values_supported": [],
+  "userinfo_encryption_alg_values_supported": [],
+  "userinfo_encryption_enc_values_supported": [],
+  "request_object_signing_alg_values_supported": [],
+  "request_object_encryption_alg_values_supported": [],
+  "request_object_encryption_enc_values_supported": [],
+  "response_modes_supported": [],
+  "registration_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/clients-registrations/openid-connect",
+  "token_endpoint_auth_methods_supported": [],
+  "token_endpoint_auth_signing_alg_values_supported": [],
+  "introspection_endpoint_auth_methods_supported": [],
+  "introspection_endpoint_auth_signing_alg_values_supported": [],
+  "authorization_signing_alg_values_supported": [],
+  "authorization_encryption_alg_values_supported": [],
+  "authorization_encryption_enc_values_supported": [],
+  "claims_supported": [],
+  "claim_types_supported": [],
+  "claims_parameter_supported": true,
+  "scopes_supported": [],
+  "request_parameter_supported": true,
+  "request_uri_parameter_supported": true,
+  "require_request_uri_registration": true,
+  "code_challenge_methods_supported": [],
+  "tls_client_certificate_bound_access_tokens": true,
+  "revocation_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/revoke",
+  "revocation_endpoint_auth_methods_supported": [],
+  "revocation_endpoint_auth_signing_alg_values_supported": [],
+  "backchannel_logout_supported": true,
+  "backchannel_logout_session_supported": true,
+  "device_authorization_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/auth/device",
+  "backchannel_token_delivery_modes_supported": [],
+  "backchannel_authentication_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/ext/ciba/auth",
+  "backchannel_authentication_request_signing_alg_values_supported": [],
+  "require_pushed_authorization_requests": false,
+  "pushed_authorization_request_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/ext/par/request",
+  "mtls_endpoint_aliases": {
+    "token_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/token",
+    "revocation_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/revoke",
+    "introspection_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/token/introspect",
+    "device_authorization_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/auth/device",
+    "registration_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/clients-registrations/openid-connect",
+    "userinfo_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/userinfo",
+    "pushed_authorization_request_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/ext/par/request",
+    "backchannel_authentication_endpoint": "https://keycloak.aiplgrnd.r73.info/realms/master/protocol/openid-connect/ext/ciba/auth"
+  }
+}
+....
+
+
+=== JSON Web Token
+
+* JSON zabezpečený podpisem a šifrováním
+* plná forma - JSON
+* kompaktní forma
+** JSON části Base64 kódované 
+** header.payload.signature
+
+
+=== JWT příklad - kompaktní forma
+
+[source,json]
+....
+eyJh0.eyJ0.Entw
+....
+
+
+=== JWT příklad dekodovaný
+
+Header
+
+[source,json]
+....
+{
+  "alg": "RS256",
+  "typ": "JWT",
+  "kid": "3rH-7cTCNrwTxAI6ILHZy-sJNsa8Mc_CRKXkb7O8DDg"
+}
+....
+
+
+=== JWT příklad dekodovaný
+Payload
+
+[source,json]
+....
+{
+  "exp": 1701640721,
+  "iat": 1701640661,
+  "auth_time": 1701640659,
+  "jti": "55530d79-60e1-4f5b-9dcc-2871a92eda92",
+  "iss": "https://keycloak.aiplgrnd.r73.info/realms/master",
+  "aud": "security-admin-console",
+  "sub": "af0f634a-f0db-47d0-ad81-715f1ccbc12d",
+  "typ": "ID",
+  "azp": "security-admin-console",
+  "nonce": "730db76f-4f69-433f-8a9b-37751f9a5412",
+  "session_state": "c7a04ac6-21a3-4a8f-8eaa-f245c83910c8",
+  "at_hash": "YOzN6dyhRQz4-A99bzMYYA",
+  "acr": "1",
+  "sid": "c7a04ac6-21a3-4a8f-8eaa-f245c83910c8",
+  "email_verified": false,
+  "preferred_username": "user"
+}
+....
+
+
+== Self Sovereign Identity
+
+* identita
+** založená na asymetrické kryptografii
+** reprezentovaná veřejným klíčem
+** držitel privátního klíče vládne identitou
+** identifikována pomocí DID - Distributed ID
+** DID URL odkazuje na DID Document
+** JSON s informacemi o identitě
+* bez prostředníků
+* např. bitcoin peněženka, v budoucnu EU Digital Identity Wallet
+* protokoly autentizace vycházejí z OIDC, jen jako IdP vystupuje SW plně pod kontrolou držitele identity
+
+[.columns]
+=== DID
+
+[.column]
+[source,json]
+....
+{
+  "id": "did:web:l-ra.github.io:contact-me",
+  "alsoKnownAs": "did:web:id.r73.info:u:lra",
+  "authentication": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1"
+    }
+  ],
+  "capabilityInvocation": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1"
+    }
+  ],
+  "capabilityDelegation": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1"
+    }
+  ],
+  "assertionMethod": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1"
+    }
+  ]
+}
+....
+
+
+[.column]
+....
+{
+  "id": "did:web:id.r73.info:u:lra",
+  "verificationMethod": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1",
+      "type": "JsonWebKey2020",
+      "controller": "did:web:id.r73.info:u:lra",
+      "publicKeyJwk": {
+        "kty": "EC",
+        "crv": "P-256",
+        "x": "PEGJMdMOMreu944e9FUHe1oW3U6_gpzl3EcjeG_-x3k",
+        "y": "IYp8p7eNIju5TUF0dP1pC7hYnMEUZlvxJiFzl0mZA_M"
+      }
+    }
+  ],
+  "authentication": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1"
+    }
+  ],
+  "capabilityInvocation": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1"
+    }
+  ],
+  "capabilityDelegation": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1"
+    }
+  ],
+  "assertionMethod": [
+    {
+      "id": "did:web:id.r73.info:u:lra#key-1"
+    }
+  ]
+}
+....
+
+=== Verifiable credentials
+
+* https://www.w3.org/TR/vc-data-model/[verifiable credentials standard]
+* podepsaná data (JSON) vázaná na SSI 
+* vydavatel podepíše datovou strukturu včetně veřejného klíče držitele - issuing
+* držitel je schopen předložit datovou strukturu doplněnou o podpis vlastním privátním klíčem - presentation
+* v evropské peněžence digitální identity jak tzv. atestace atributů např. VŠ diplom
+
+
+

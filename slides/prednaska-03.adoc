@@ -1,8 +1,260 @@
-= Title Slide
+= LDAP, Kerberos, SAML
 include::revealjs-settings.adoc[]
 
-== Slide One
 
-* Foo
-* Bar
-* World
+== Přehled - proč tyhle technologie
+
+* *https://www.rfc-editor.org/rfc/rfc4510[LDAP]* - základ Windows domény - Active Directory ~ LDAP
+* *Kerberos* - základ Windows domény - autentizace počítačů a uživatelů
+* *SAML2* - propojení intranetu s internetem
+
+== LDAP
+
+* Lightweight Directory Protocol - adresářová služba
+* *široce podporováno v informačních systémech*
+* uložení informací popisujících organizaci ve standardním datovém modelu 
+* standardní protokol pro přístup k datům ve standardním datovém modelu 
+** organizační struktura
+** uživatelé
+** skupiny
+** další zdroje (počítače, tiskárny, místnosti, ...)
+
+== LDAP standardy
+
+* LDAP: Roadmap https://www.rfc-editor.org/rfc/rfc4510[RFC4510]
+* LDAP: The Protocol https://www.rfc-editor.org/rfc/rfc4511[RFC4511]
+* LDAP: Directory Information Models https://www.rfc-editor.org/rfc/rfc4512[RFC4512]
+* LDAP: Authentication Methods and Security Mechanisms https://www.rfc-editor.org/rfc/rfc4513[RFC4513]
+* LDAP: String Representation of Distinguished Names https://www.rfc-editor.org/rfc/rfc4514[RFC4514]
+* LDAP: String Representation of Search Filters https://www.rfc-editor.org/rfc/rfc4515[RFC4515]
+* LDAP: Uniform Resource Locator https://www.rfc-editor.org/rfc/rfc4516[RFC4516]
+* LDAP: Syntaxes and Matching Rules https://www.rfc-editor.org/rfc/rfc4517[RFC4517]
+* LDAP: Internationalized String Preparation https://www.rfc-editor.org/rfc/rfc4518[RFC4518]
+* LDAP: Schema for User Applications https://www.rfc-editor.org/rfc/rfc4519[RFC4519]
+
+[.columns]
+== LDAP - datový model
+
+[.columns]
+* stromová struktura - Directory Information Tree (DIT)
+* uzel stromu - entry
+* entry - obsahuje atributy
+* atribut je dvojice
+** popis (cn, o, l, name, o, ou, givenName, firstName, member)
+** jedna nebo více hodnot
+
+[.columns]
+* hodnota
+** data, jejichž význam je definován schematem a syntaxí
+* schema - využívá se OID
+** definuje typy atributů
+** porovnávací pravidla
+** syntaxe atributu
+
+=== LDAP - schema
+
+* definuje typy atributů
+* základní schéma v https://www.rfc-editor.org/rfc/rfc4519[RFC4519]
+* hierarchické (subtype/supertype)
+....
+( 2.5.4.41 NAME 'name'
+         EQUALITY caseIgnoreMatch
+         SUBSTR caseIgnoreSubstringsMatch
+         SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+....
+
+....
+( 2.5.4.7 NAME 'l'
+         SUP name )
+....
+
+* objektový model typů entry s děděním
+
+=== LDAP - syntaxe hodnot
+
+* definuje možné hodnoty atributů
+* základní syntaxe v https://www.rfc-editor.org/rfc/rfc4517[RFC4517]
+* jednoduché - DirectoryString, Numeric
+* strukturované - ASN.1 struktury pro různé účely
+
+=== LDAP - jména
+
+* distinguished name (DN)
+** cesta ve stromové struktuře
+** analogie absolutní cesty na souborovém systému
+** uspořádaný seznam RDN
+* relative distinguished name (RDN)
+** rozlišení na jedné úrovni stromu
+** jeden nebo více atributů s hodnotou
+
+
+== LDAP - protokol
+
+* *bind* - přihlášení 
+* *search* - vyhledávání
+* *update* - zápis
+
+=== LDAP - bind
+
+* podporuje různé metody pomocí SASL
+* simple bind
+** využívá atributy typu password, který má speciální vlastnosti
+** ověří shodu hesla 
+
+[.columns]
+=== LDAP - search
+
+[.column]
+* sada atributů, které mají být získány
+* kontext - DN - odkud začíná hledání
+* hloubka - aktuální entry, jedna úroveň, celý podstrom
+* filtr
+** hodnoty atributů hledané entry
+** `(&(objectClass=*)(mail=xxx@zzzz.cz))`
+
+[.column]
+* SQL ekvivalenty
+** SELECT 
+** FROM
+** WHERE
+
+=== LDAP - URL
+
+* umožňuje zapsat dotaz do LDAP jako URL
+* ldap://host:port/dn?attributes?scope?filter
+* ldap://ldap1.example.net:6666/o=University of Michigan,
+             c=US?mail?sub?(cn=Somebody)
+
+
+=== LDAP - update 
+* modify
+* add
+* delete
+* modify DN
+* speciální formát LDIF - textový formát pro zápis operací 
+
+
+== Praktické použití
+
+* Windows Active Directory
+* konfigurace přihlášení v Apache HTTPD
+
+=== LDAP ve Windows doméně
+
+Domain Controller - LDAP server
+
+....
+
+> nslookup
+> set type=SRV
+> _ldap._tcp.domena.com
+
+....
+
+na serveru nástroj ADSI Edit
+
+my budeme k ukázkám používat Apache Directory Studio
+
+=== LDAP pro přihlášení v Apache HTTPD
+
+* https://httpd.apache.org/docs/2.4/mod/mod_authnz_ldap.html[mod_authnz_ldap]
+** pracuje s basic autentizací - uživatelské jméno a heslo je přenesené v hlavičce HTTP požadavku
+* fáze autentizace
+** vyhledání uživatele podle zadaného username
+** provedení simple bind pomocí vyhledaného záznamu a hesla z HTTP požadavku
+* fáze autorizace - podle konfigurace je prověřováno
+** příslušnost ke skupině
+** existence atributu s konkrétní hodnotou
+** pozitivní výsledek konkrétního filtru
+
+
+== Kerberos
+
+* protokol pro autentizaci v lokální síti
+* single sign on - SSO - jedno přihlášení se přenáší mezi službami
+* vyžaduje synchronizovaný čas na všech počítačích
+* založen na tzv.ticketech
+** základní Ticket Granting Ticket 
+** reprezentuje session a zpřístupňuje další služby
+* oboustranná autentizace
+* možnost delegace oprávnění apod.
+* http://www.youtube.com/watch?v=7-LjpO2nTJo
+
+
+=== Kerberos - termíny
+
+* ticket - struktura umožňující autentizovat 
+* principal - entita, kterou je možné autentizovat
+* user principal name - identifikátor uživatele
+* service principal name - provázání služby na konkrétní účet
+** <service class>/<host>:<port>/<service name>
+** LDAP/SE-DCxxx.xxxxx.com/groupinfra.com
+** host/cz410000vm2.xxxxx.com
+
+=== Kerberos schéma
+[.stretch]
+image::img/kerberos.png[]
+
+
+=== Kerberos ve WIndows
+
+* všudypřítomný
+* přihlášení uživatele na počítač
+* přístup ke sdíleným diskům, tiskárnám apod.
+* každá aplikace může použít Kerberos pro autentizaci
+* SPNEGO - použití ve Web aplikacích
+* příkaz
+** `klist`
+** `klist purge`
+
+[.columns]
+== Federalizace - obecně
+
+[.column]
+* "outsourcing" autentizace
+* účastníci
+** spoléhající strana 
+*** relying party - RP
+*** service provider - SP
+** poskytovatel identity
+*** identity provider - IdP
+
+[.column]
+* protokoly 
+** Kerberos (částečně pomocí trustu)
+** SAML2 
+** OpenID Connect
+* za jednotným protokolem může být libovolný způsob autentizace
+
+
+
+== SAML2
+
+* http://docs.oasis-open.org/security/saml/v2.0/sstc-saml-approved-errata-2.0.html[Securit Assertion Markup Protocol v2]
+* Federalizační protokol
+* založený na XML
+* IdP na žádost RP generuje tzv. assertions
+** identita
+** členství ve skupině
+** ... cokoli ... 
+* postupem času mnoho rozšíření, vlastností
+* existují různé scénáře - my se soustředíme na ten nejobvyklejší
+
+=== SAML2
+
+image::img/saml_guidance_saml_flow.png[]
+
+=== SAML2 - metadata
+
+* metadata SP definují 
+** požadavky na odpověď
+** povolené návratové (a jiné) URL
+** certifikáty a klíče
+* metadata IdP
+** vlastnosti požadavku
+** URL pro zahájení autentizace
+** URL pro získání assertions
+** podporované scénáře
+** certifikáty a klíče
+
+

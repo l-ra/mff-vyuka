@@ -1,0 +1,53 @@
+= Praktické příklady
+include::revealjs-settings.adoc[]
+
+[.columns]
+== Možné úkoly k řešení
+
+[.column]
+* OIDC/SAML2 přihlášení některým z veřejných IdP
+** registrace klienta, spuštění přihlášení, zobrazení údajů o přihlášeném uživateli
+* OAUTH2 použití dat některé z veřejných služeb pomocí 
+** registrace klienta, získání access tokenu, zobrazení dat z externí aplikace
+* OIDC/SAML2 přihlášení z dedikovaného Keycloak v jiné aplikaci
+** konfigurace IdP v Keycloak, konfigurace externí aplikace pro použití tohoto IdP
+
+[.column]
+* Passkeys - implementace přihlášení do aplikace
+** začlenění passkeys loginu do aplikace - zobrazení informací o použitém passkey po přihlášení
+* TOTP - implementace druhého faktoru přihlášení
+** začlenění TOTP do aplikace a implementace
+* vlastní náměty
+
+== Podstat úkolu
+
+* speciální ukázková aplikace
+* existující aplikace 
+* implementuje některé z technik 
+
+== Definition of Done 1 
+
+* aplikace je dostupná ve formě zdrojových kódů (veřejný git repozitář, email)
+* Buď  - aplikace je dostupná na konkrétní adrese v internetu existuje funkční aplikace, která umožní ověřit požadovanou operaci
+* existuje dokument popisující použité technologie, postup implementace, řešené problémy v rozsahu max. 5 normostran (1250 slov)
+
+== Definition of Done 2
+
+* Nebo - aplikaci je možné automatizovaně sestavit do formy docker image 
+** pomocí skriptů které jsou součástí zdrojového kódu (na běžné Linux distribuci - referenční distribuce - Ubuntu 22.04)
+** image je možné nakonfigurovat pomocí proměnných prostředí
+** jedna z položek je URL aplikace pro použití konkrétní internetové adresy 
+** pro test bude možné použít adresu `student-XXX.apps.r73.info` - XXX bude přiděleno
+** student dodá další potřebné položky pro konfiguraci běhu aplikace na adrese `student-XXX.apps.r73.info`
+
+
+
+== Co je k dispozici
+
+* služba https://github.com[github]  - pro zdrojové kódy
+* služba https://ngrok.com[ngrok] - pro zpřístupnění vyvíjené aplikace běžící na lokálním počítači
+* dedikovaný https://keycloak.aiplgrnd.r73.info/[Keycloak] - k dispozici pro testy
+* IdP - Github, Google, Facebook, MojeId, Twitter, jiná
+
+
+

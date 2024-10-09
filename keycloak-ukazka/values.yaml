@@ -1,0 +1,8 @@
+keycloak:
+  proxy: edge
+  ingress:
+    enabled: true
+    hostname: keycloak.aiplgrnd.r73.info
+    tls: true
+    annotations: 
+      cert-manager.io/cluster-issuer: letsencrypt-prod

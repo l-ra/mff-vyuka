@@ -1,2 +1,6 @@
+.publish-vars
+.vscode
+prace-studentu-*/
 output/
 cache/
+

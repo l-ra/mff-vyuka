@@ -1,8 +1,86 @@
-= Title Slide
+= Passwordless
 include::revealjs-settings.adoc[]
 
-== Slide One
+[.columns]
+== Technologie Passkeys
 
-* Foo
-* Bar
-* World
+[.column]
+* cílem je zbavit se hesel
+* postupné kroky U2F/UAF, WebAuthn, Passkeys
+* základní vlastnosti - _strong, attested, scoped, public key-based credentials for web applications_
+
+[.column]
+* asymetrická kryptografie - tajná část credentials je bezpečně uložená
+* odolné proti phishingu - protokol neumožňuje přeposílat credentials
+* snadno použitelné - bez instalace, intuitivní
+* atestace autentikátorů
+* každý web má vlastní sadu klíčů
+
+[.columns]
+== Historie
+
+[.column]
+* *2013* - Fast IDentity Online (https://fidoalliance.org/[FIDO])
+* *2014* - specifikace 
+** Universal 2nd Factor (U2F)
+** Universal Authentication Factor (UAF)
+* *2016* - FIDO2 a W3C 
+* *2018* 
+** https://www.w3.org/TR/webauthn-1/[W3C WebAuthn standard 1]
+** https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html[CTAP2]
+
+[.column]
+* *2019* - roste adopce WebAuthn
+* *2021* - https://www.w3.org/TR/webauthn-2/[WebAuthn 2]
+** Chrome desktop i mobil
+** Android v prohlížeči i aplikacích
+** Widows - zabudováno jako Windows Hello
+** Firefox desktop
+** Apple po tlaku trhu
+* podpora ve službách
+
+[.columns]
+== Současnost
+
+[.column]
+* *2023* - https://www.w3.org/TR/webauthn-3/[WebAUthn 3]
+* *2023* - https://fidoalliance.org/passkeys/[Passkeys], https://passkeys.dev/[passkeys.dev]
+** společné úsilí trhu
+** https://www.google.com/account/about/passkeys/[Google], https://support.apple.com/cs-cz/guide/iphone/iphf538ea8d0/ios[Apple], https://support.microsoft.com/en-us/windows/passkeys-in-windows-301c8944-5ea2-452b-9886-97e4d2ef4422[Microsoft]
+** Passkeys podporované všude
+** ztráta suverenity uživatele
+
+[.column]
+* klíče součástí platformy
+* uživatelsky příjemné jednotné ovládání - doporučené UX
+* cross device (přihlášení telefonem jako externím autentikátorem)
+* klíče se stěhují s účtem (Google, Apple, Microsoft)
+* uživatel v područí platformy
+* alternativy - https://www.future.1password.com/passkeys/[1Password], https://bitwarden.com/passwordless-passkeys/[Bitwarden]
+
+== WebAuthn architektura - základní
+
+image::img/U2F.png[]
+
+== Další zdroje
+
+* https://webauthn.me/passkeys[Webauthn.me]
+
+
+== Základní schéma WebAuthn
+
+https://webauthn.guide/[GUIDE]
+
+image::img/webauthn-zakladni-schema.png[]
+
+== WebAuthn - detail
+
+image::img/webauthn-detail.png[]
+
+== WebAuthn - register
+
+image::img/webauthn-register.png[]
+
+== WebAuthn - login
+
+image::img/webauthn-login.png[]
