@@ -49,6 +49,7 @@ include::revealjs-settings.adoc[]
 ** https://www.google.com/account/about/passkeys/[Google], https://support.apple.com/cs-cz/guide/iphone/iphf538ea8d0/ios[Apple], https://support.microsoft.com/en-us/windows/passkeys-in-windows-301c8944-5ea2-452b-9886-97e4d2ef4422[Microsoft]
 ** Passkeys podporované všude
 ** ztráta suverenity uživatele
+** *2024* - https://fidoalliance.org/specifications-credential-exchange-specifications/[specifikace pro výměnu credentials mezi poskytovateli]
 
 [.column]
 * klíče součástí platformy
